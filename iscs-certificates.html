@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ISCS Quarterly Superstar Certificates</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Cormorant+Garamond:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#0f1d40;
+    --navy-2:#16295c;
+    --gold:#d4af17;
+    --gold-light:#f5dd8e;
+    --silver:#7c8a99;
+    --silver-light:#e3e8ed;
+    --cream:#faf7f0;
+    --ink:#1c2531;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:#3a3f47;
+    color:var(--ink);
+    padding:24px;
+  }
+
+  /* ---------- Controls (screen only) ---------- */
+  .controls{
+    max-width:1100px;
+    margin:0 auto 20px;
+    background:#fff;
+    border-radius:10px;
+    padding:16px 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+  }
+  .controls h1{
+    font-family:'Playfair Display',serif;
+    font-size:17px;
+    margin:0 20px 0 0;
+    color:var(--navy);
+    flex:1 0 100%;
+  }
+  .controls select, .controls button{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    padding:8px 12px;
+    border-radius:6px;
+    border:1px solid #d3d3d3;
+    background:#fff;
+    cursor:pointer;
+  }
+  .controls button{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    font-weight:600;
+  }
+  .controls .hint{
+    font-size:12px;
+    color:#666;
+    flex:1 0 100%;
+  }
+
+  /* ---------- Certificate ---------- */
+  .stage{
+    max-width:1100px;
+    margin:0 auto;
+    display:flex;
+    justify-content:center;
+  }
+
+  .cert{
+    width:1000px;
+    height:700px;
+    background:var(--cream);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+  }
+
+  .cert::before{ /* outer hairline border */
+    content:"";
+    position:absolute;
+    inset:22px;
+    border:1.5px solid var(--tier-color, var(--gold));
+    pointer-events:none;
+  }
+
+  /* corner flourish - top right (kept clear of the text column) */
+  .corner{
+    position:absolute;
+    top:0; right:0;
+    width:200px; height:200px;
+    background:
+      linear-gradient(135deg, transparent 48%, var(--navy) 49%, var(--navy) 56%, transparent 57%),
+      linear-gradient(135deg, transparent 58%, var(--tier-color, var(--gold)) 59%, var(--tier-color, var(--gold)) 63%, transparent 64%);
+    opacity:.95;
+  }
+
+  /* translucent star watermark cluster - fills empty space, echoes "Superstar" */
+  .wm-star{
+    position:absolute;
+    background:var(--tier-color, var(--gold));
+    z-index:1;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .wm-star.s1{ width:280px; height:280px; right:30px;  bottom:20px;  opacity:.09; }
+  .wm-star.s2{ width:130px; height:130px; right:270px; bottom:150px; opacity:.07; }
+  .wm-star.s3{ width:85px;  height:85px;  right:60px;  bottom:270px; opacity:.06; }
+
+  /* side ribbon */
+  .ribbon{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:64px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--navy) 0px, var(--navy) 20px,
+      var(--cream) 20px, var(--cream) 26px,
+      var(--tier-color, var(--gold)) 26px, var(--tier-color, var(--gold)) 44px,
+      var(--cream) 44px, var(--cream) 50px,
+      var(--navy) 50px, var(--navy) 64px
+    );
+  }
+
+  .seal{
+    position:absolute;
+    left:16px; top:60px;
+    width:96px; height:96px;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-light), var(--tier-color, var(--gold)) 55%, #9b7a24 100%);
+    box-shadow: 0 3px 8px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,255,255,.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .seal::after{
+    content:"ISCS";
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--navy);
+    letter-spacing:1px;
+  }
+  .seal .tails{
+    position:absolute;
+    top:82px; left:16px;
+    width:0; height:0;
+  }
+  .ribtail{
+    position:absolute;
+    top:150px;
+    width:26px; height:60px;
+    background: var(--tier-color, var(--gold));
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  }
+  .ribtail.l{ left:22px; transform:rotate(-6deg); }
+  .ribtail.r{ left:56px; transform:rotate(6deg); background:#9b7a24;}
+
+  .content{
+    position:relative;
+    z-index:2;
+    padding:56px 90px 40px 130px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .org{
+    font-family:'Playfair Display',serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:.5px;
+    color:var(--navy);
+    text-transform:uppercase;
+  }
+  .subline{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--tier-color-dark, #8a6d1f);
+    margin-top:2px;
+  }
+
+  .eyebrow{
+    margin-top:34px;
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:#6b6f76;
+    font-weight:600;
+  }
+
+  .tier-tag{
+    display:inline-block;
+    margin-top:10px;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#fff;
+    text-shadow:0 1px 1px rgba(0,0,0,.35);
+    background:var(--tier-badge, var(--gold));
+    padding:6px 16px;
+    border-radius:2px;
+    box-shadow:0 2px 5px rgba(0,0,0,.25);
+  }
+
+  .name{
+    font-family:'Playfair Display',serif;
+    font-weight:600;
+    font-size:52px;
+    color:var(--navy);
+    margin:18px 0 4px;
+    line-height:1.1;
+  }
+
+  .role{
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:#555;
+    letter-spacing:.5px;
+    margin-bottom:22px;
+  }
+
+  .body-text{
+    font-family:'Cormorant Garamond',serif;
+    font-size:20px;
+    line-height:1.6;
+    color:#333;
+    max-width:560px;
+  }
+
+  .level-badge{
+    display:inline-block;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--navy);
+    background:transparent;
+    border:1px solid var(--navy);
+    padding:5px 12px;
+    border-radius:2px;
+  }
+
+  .footer{
+    margin-top:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    padding-top:24px;
+  }
+  .sig{
+    text-align:center;
+    width:220px;
+  }
+  .sig .line{
+    border-top:1.3px solid #333;
+    margin-bottom:6px;
+  }
+  .sig .label{
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:#555;
+  }
+  .date-box{
+    text-align:center;
+    width:200px;
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff; padding:0;}
+    .controls{display:none;}
+    .stage{max-width:none;}
+    .cert{
+      box-shadow:none;
+      width:100%;
+      height:100vh;
+      page-break-after:always;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <h1>ISCS Q2 2026 Superstar Certificates — preview &amp; print</h1>
+  <select id="certSelect"></select>
+  <button onclick="window.print()">Print current certificate</button>
+  <button onclick="printAll()">Print all 14 (one per page)</button>
+  <div class="hint">Set your browser print layout to Landscape, "None" margins, and disable headers/footers for the cleanest result. Review every name and note before laminating.</div>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<script>
+// ---- Edit this list to match your actual staff/awards ----
+const DATA = [
+  { name:"Smollie Musepero", tier:"winner",
+    note:"Smollie consistently demonstrates a strong work ethic and an unwavering commitment to delivering high-quality care." },
+  { name:"Joy Idika", tier:"winner",
+    note:"Joy consistently goes above and beyond in carrying out her duties, demonstrating diligence, professionalism, and a strong commitment to delivering high-quality care. She also takes the time to enrich the wellbeing of service users through meaningful engagement." },
+  { name:"Hilda Chigovanyika", tier:"winner",
+    note:"Hilda consistently demonstrates dedication, professionalism, and a positive attitude, setting a fine example for the wider team." },
+  { name:"Lettie Chirima", tier:"winner",
+    note:"A true team player who works hard and consistently goes out of her way to make everyone around her feel comfortable and supported." },
+  { name:"Blessing Maenzanise", tier:"winner",
+    note:"A true team player who works hard and consistently goes out of her way to make everyone around her feel comfortable and supported." },
+  { name:"Dylan Chimunya", tier:"winner",
+    note:"Dylan has a consistently positive impact on the service users he supports, who regularly speak highly of him. He is recognised for his reliability, consistency, and positive attitude towards his work." },
+  { name:"Sam Gowans", tier:"winner",
+    note:"Sam embodies the values of ISCS through her dedication, professionalism, and willingness to support both colleagues and service users. She is always ready to assist with familiarisation visits, assessments, and covering shifts whenever needed." },
+
+  { name:"Lynn Shumba", tier:"runner-up",
+    note:"A positive and reliable individual who consistently arrives to work on time and maintains detailed, thorough case notes on the care planner. Lynn is well regarded both within Integrity and by the service users she supports." },
+  { name:"Batsirai Chimbadzwa", tier:"runner-up",
+    note:"A standout member of Team 2, Batsirai completes his duties efficiently and reliably, with minimal need for follow-up. He consistently offers considered, constructive feedback when consulted on service delivery." },
+  { name:"Adson Maguri", tier:"runner-up",
+    note:"A pleasure to work with, and highly commended by service users for the quality and warmth of his care." },
+  { name:"Stellah Mutongwizo", tier:"runner-up",
+    note:"A consistently reliable member of the team who can always be counted on to provide high-quality, person-centred care that reflects the organisation's values." },
+  { name:"Esnath Chithonje", tier:"runner-up",
+    note:"Esnath places the safety and wellbeing of both service users and colleagues at the forefront of her practice." },
+  { name:"Silvester Rubaya", tier:"runner-up",
+    note:"A supportive team member who is always willing to assist colleagues whenever needed, contributing positively to both the team and the quality of care provided." },
+  { name:"Marshal Makuwatsine", tier:"runner-up",
+    note:"A dedicated problem solver who goes the extra mile to support his team and colleagues." },
+];
+
+const TIER_TEXT = {
+  "winner": { eyebrow:"Certificate of Appreciation — Q2 2026", tag:"Quarterly Superstar" },
+  "runner-up": { eyebrow:"Certificate of Appreciation — Q2 2026", tag:"Quarterly Runner-Up" }
+};
+
+const TIER_COLOR = {
+  "winner": { c:"#d4af17", d:"#7a5c00",
+    badge:"linear-gradient(135deg, #f5dd8e 0%, #d4af17 45%, #96760f 100%)" },
+  "runner-up": { c:"#5f6b78", d:"#33393f",
+    badge:"linear-gradient(135deg, #eef1f4 0%, #9aa5b1 45%, #5f6b78 100%)" }
+};
+
+function certHTML(entry, idx){
+  const t = TIER_TEXT[entry.tier];
+  const col = TIER_COLOR[entry.tier];
+  const stars = '★★★';
+  return `
+  <div class="cert" style="--tier-color:${col.c}; --tier-color-dark:${col.d}; --tier-badge:${col.badge};">
+    <div class="ribbon"></div>
+    <div class="corner"></div>
+    <div class="watermark-star wm-star s1"></div>
+    <div class="watermark-star wm-star s2"></div>
+    <div class="watermark-star wm-star s3"></div>
+    <div class="seal"></div>
+    <div class="ribtail l"></div>
+    <div class="ribtail r"></div>
+    <div class="content">
+      <div class="org">Integrity Social Care Solutions</div>
+      <div class="subline">${t.eyebrow}</div>
+      <div class="eyebrow">Presented to</div>
+      <div class="name" style="margin-bottom:14px;">${entry.name}</div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="tier-tag">${stars} ${t.tag}</div>
+        ${entry.level === 'senior' ? '<div class="level-badge">Senior Practitioner</div>' : ''}
+      </div>
+      <div class="body-text" style="margin-top:20px;">${entry.note}</div>
+      <div class="footer" style="justify-content:flex-start; gap:120px;">
+        <div class="sig"><div class="line"></div><div class="label">Director of Care</div></div>
+        <div class="date-box"><div style="font-family:'Cormorant Garamond',serif; font-size:17px; margin-bottom:6px;">25/07/2026</div><div class="line"></div><div class="label">Date</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+const stage = document.getElementById('stage');
+const select = document.getElementById('certSelect');
+
+DATA.forEach((d,i)=>{
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = `${i+1}. ${d.name} — ${d.tier === 'winner' ? 'Winner' : 'Runner-up'}`;
+  select.appendChild(opt);
+});
+
+function render(i){
+  stage.innerHTML = certHTML(DATA[i], i);
+}
+select.addEventListener('change', e => render(parseInt(e.target.value)));
+render(0);
+
+function printAll(){
+  stage.innerHTML = DATA.map((d,i)=>certHTML(d,i)).join('');
+  window.print();
+  render(parseInt(select.value));
+}
+</script>
+
+</body>
+</html>
